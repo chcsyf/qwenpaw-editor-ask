@@ -1,0 +1,13 @@
+# ===== 状态标记与临时文件 =====
+*.bak
+*.log
+*.tmp
+temp/
+Temp/
+node_modules/
+__pycache__/
+.env
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db

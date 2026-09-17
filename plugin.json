@@ -1,0 +1,20 @@
+{
+    "id": "qwenpaw-editor-ask",
+    "name": "对话窗口选区提问",
+    "version": "0.0.1",
+    "description": "在对话窗口内直接开一个文件面板（右上角 📎 按钮）：左侧文件树 + Monaco 只读预览（只预览文本文件，二进制给明确提示），选中代码后点「➤ 送到对话」或 Ctrl+K，引用块（文件路径:起止行 + 带语言标记的代码块）自动写入当前对话输入框，光标定位到末尾，接着输入问题回车发送即可。面板四周/四角可拖拽调整大小、标题栏可拖动移动（几何记忆），左栏与预览之间的分隔条可拖拽调整文件列表宽度（双击复位，面板拉宽只加宽右侧预览），文件树行右键可「插入路径到对话 / @ 引用 / 打开预览 / 复制路径」。纯前端插件，无后端进程；复用平台自带工作区 API（/api/workspace/tree、/file-content），面板停在对话栏左侧不遮挡输入框",
+    "author": "archigram",
+    "license": "Apache-2.0",
+    "type": "frontend",
+    "qwenpaw_version": {
+        "min": "2.0.0",
+        "max": "2.1.0"
+    },
+    "entry": {
+        "frontend": "index.js"
+    },
+    "meta": {
+        "category": "developer-tools",
+        "icon": "📎"
+    }
+}
