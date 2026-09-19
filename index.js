@@ -1,5 +1,5 @@
 /**
- * QwenPaw 对话窗口选区提问（qwenpaw-editor-ask）v0.0.1 — 纯前端插件
+ * QwenPaw 对话窗口文件引用（qwenpaw-editor-ask）v0.1.0 — 纯前端插件
  *
  * 目标：留在官方对话窗口里，选中代码后一键把「引用块」送进当前输入框。
  *
@@ -11,7 +11,7 @@
   "use strict";
 
   var PLUGIN_ID = "qwenpaw-editor-ask";
-  var VERSION = "0.0.1";
+  var VERSION = "0.1.0";
   var LS_PREFIX = "qwenpaw-editor-ask:";
   var BTN_ATTR = "data-qwenpaw-editor-ask-btn";
   var MONACO_CDN = "https://cdn.jsdelivr.net/npm/monaco-editor@0.56.0/min/vs";
@@ -264,9 +264,13 @@
     };
     // 拖拽 / 缩放进行中：暂停「自动贴靠」重算，也不提交 React 状态（见 applyAnchor）
     var interacting = false;
-    // 上一次实际写进 element.style 的几何签名 + 上一次真实矩形（拖拽起点）
+    // 上一次实际写进 element.style 的几何签名 + 写入目标节点 + 上一次真实矩形（拖拽起点）
+    // 注意：签名缓存必须绑定节点。面板关闭时 React 会卸载 DOM（Panel 在 !state.open 时 return null），
+    // 重新打开是一个**全新的空节点**（只剩 React 写的 width），此时若签名与关闭前相同而被跳过，
+    // 新节点就永远拿不到 top/left/right/bottom —— fixed + 偏移全 auto = 落回静态位置（body 末尾，视口外）。
     var lastStyleSig = null;
-    function invalidateGeom() { lastStyleSig = null; }
+    var lastStyleEl = null;
+    function invalidateGeom() { lastStyleSig = null; lastStyleEl = null; }
     var listeners = [];
     function emit() { listeners.forEach(function (f) { try { f(); } catch (e) { console.error(e); } }); }
     function setState(patch) {
@@ -624,11 +628,13 @@
       if (top < EDGE_MARGIN) top = EDGE_MARGIN;
       return { left: left, top: top, width: width, height: height };
     }
-    // 只写真正变化的样式（避免每秒一次的定时贴靠把 style 写满、触发无谓重排）
+    // 只写真正变化的样式（避免每秒一次的定时贴靠把 style 写满、触发无谓重排）。
+    // 缓存按 **节点 + 样式签名** 判定：换了节点（面板关掉重开）必须无条件重写一次。
     function applyStyles(el, styles) {
       var sig = JSON.stringify(styles);
-      if (sig === lastStyleSig) return;
+      if (el === lastStyleEl && sig === lastStyleSig) return;
       lastStyleSig = sig;
+      lastStyleEl = el;
       Object.keys(styles).forEach(function (k) { el.style[k] = styles[k]; });
       layoutSoon();
     }
@@ -1230,7 +1236,7 @@
         }),
         h("div", { className: PLUGIN_ID + "-hd", onMouseDown: startInteraction("move"), title: "按住拖动面板；四周 / 四角可调整大小；点 ⌖ 恢复自动贴靠" },
           h("span", { className: PLUGIN_ID + "-title" },
-            "📎 选区提问",
+            "📎 文件引用",
             state.pos ? h("span", { className: "sub" }, "· 已手动定位") : null,
           ),
           h("select", {
@@ -1372,7 +1378,7 @@
       return h("button", {
         type: "button",
         [BTN_ATTR]: "1",
-        title: state.open ? "关闭「选区提问」面板" : "打开「选区提问」面板：选中文件里的内容送到对话",
+        title: state.open ? "关闭「文件引用」面板" : "打开「文件引用」面板：选中工作区文件里的内容送到对话",
         onClick: function () { setState({ open: !store.open }); },
         style: {
           border: "none",
@@ -1405,6 +1411,6 @@
       console.error("[" + PLUGIN_ID + "] 注册右上角按钮失败", e);
     }
 
-    if (VERSION) console.log("[" + PLUGIN_ID + "] 已加载 v" + VERSION + "（对话窗口 📎 选区提问）");
+    if (VERSION) console.log("[" + PLUGIN_ID + "] 已加载 v" + VERSION + "（对话窗口 📎 文件引用）");
   });
 })();

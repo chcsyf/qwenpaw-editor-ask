@@ -1,6 +1,7 @@
-# 📎 对话窗口选区提问（qwenpaw-editor-ask）
+# 📎 对话窗口文件引用（qwenpaw-editor-ask）v0.1.0
 
-在 **QwenPaw 官方对话窗口**里就地看文件、选代码、一键送到输入框的**纯前端插件**。
+在 **QwenPaw 官方对话窗口**里就地打开**工作区文件面板**看文件、选代码、一键引用到输入框提问的**纯前端插件**。
+（旧名「对话窗口选区提问」—— 名字里没说清"看的是工作区文件"。）
 
 ![qwenpaw-editor-ask](https://raw.githubusercontent.com/chcsyf/qwenpaw-editor-ask/main/qwenpaw-editor-ask.png)
 
